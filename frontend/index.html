@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Lab - Chunking Visualization</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 RAG Lab - Chunking Visualization</h1>
+            <p class="subtitle">Understand how different chunking strategies break text differently</p>
+        </header>
+
+        <div class="input-section">
+            <div class="text-input-wrapper">
+                <div class="input-header">
+                    <label for="inputText">Input Text</label>
+                    <button id="trySampleBtn" class="sample-btn">📝 Try Sample Text</button>
+                </div>
+                
+                <div class="text-input-container" id="textInputContainer">
+                    <textarea 
+                        id="inputText" 
+                        placeholder="Paste your text here..."
+                        rows="10"
+                    ></textarea>
+                    
+                    <div id="sampleTextPanel" class="sample-panel hidden">
+                        <h3>Sample Text</h3>
+                        <div id="sampleTextContent" class="sample-content"></div>
+                        <button id="copySampleBtn" class="copy-btn">📋 Copy & Use This Text</button>
+                    </div>
+                </div>
+                
+                <div class="word-count">
+                    <span id="wordCount">0 words</span> / 10,000 max
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label for="strategy">Chunking Strategy</label>
+                    <select id="strategy">
+                        <option value="fixed">Fixed-Size</option>
+                        <option value="sentence">Sentence-Based</option>
+                        <option value="paragraph">Paragraph-Based</option>
+                        <option value="recursive">Recursive</option>
+                    </select>
+                </div>
+
+                <div id="paramsContainer" class="params-container">
+                    <!-- Dynamic parameters will be inserted here -->
+                </div>
+
+                <button id="generateBtn" class="generate-btn">🚀 Generate Chunks</button>
+            </div>
+        </div>
+
+        <div id="resultsSection" class="results-section hidden">
+            <div class="results-header">
+                <h2>Results</h2>
+                <div class="results-controls">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="showOverlapToggle" checked>
+                        <span>Show Overlap</span>
+                    </label>
+                    <div class="chunk-count">
+                        <span id="chunkCount">0 chunks</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="visualizationContainer" class="visualization-container">
+                <!-- Chunked text visualization will appear here -->
+            </div>
+
+            <div id="chunkInfoPanel" class="chunk-info-panel">
+                <h3>Chunk Details</h3>
+                <div id="chunkInfo">
+                    <p>Click on any highlighted chunk to see details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="static/script.js"></script>
+</body>
+</html>
