@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from typing import Dict, Any, List
 import os
 
-from chunking import (
+from backend.chunking import (
     FixedChunker,
     SentenceChunker,
     ParagraphChunker,
