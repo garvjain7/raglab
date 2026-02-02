@@ -1,6 +1,5 @@
 // Configuration
-const API_URL = import.meta.env.VITE_API_URL;
-
+const API_URL = CONFIG.API_URL;
 
 // Sample text for demonstration
 const SAMPLE_TEXT = `Artificial intelligence is transforming the world. Machine learning algorithms can now recognize patterns in data that humans might miss.
@@ -180,7 +179,7 @@ async function generateChunks() {
     generateBtn.disabled = true;
     
     try {
-        const response = await fetch(`${API_URL}/api/api/chunks/${strategy}`, {
+        const response = await fetch(`${API_URL}/api/chunks/${strategy}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

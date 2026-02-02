@@ -31,9 +31,9 @@ app.add_middleware(
 # -----------------------------
 # Paths
 # -----------------------------
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend")
-STATIC_DIR = os.path.join(FRONTEND_DIR, "static")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # ./ if main.py is root
+FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")      # ./frontend
+STATIC_DIR = os.path.join(FRONTEND_DIR, "static")     # ./frontend/static
 
 # Serve static assets
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
