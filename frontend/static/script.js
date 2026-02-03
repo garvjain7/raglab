@@ -16,20 +16,48 @@ The future of AI depends on solving these fundamental problems. Researchers are 
 const STRATEGY_PARAMS = {
     fixed: [
         { name: 'chunk_size', label: 'Chunk Size', type: 'number', default: 100, min: 10, max: 5000 },
-        { name: 'overlap', label: 'Overlap (optional)', type: 'number', default: 0, min: 0, max: 500 }
+        { name: 'overlap', label: 'Chunk Overlap Size', type: 'number', default: 0, min: 0, max: 500 }
     ],
     sentence: [
         { name: 'max_chunk_size', label: 'Max Chunk Size', type: 'number', default: 500, min: 50, max: 5000 },
-        { name: 'overlap', label: 'Overlap (optional)', type: 'number', default: 0, min: 0, max: 500 }
+        { name: 'overlap', label: 'Chunk Overlap Size', type: 'number', default: 0, min: 0, max: 500 }
     ],
     paragraph: [
         { name: 'max_chunk_size', label: 'Max Chunk Size (optional)', type: 'number', default: 1000, min: 100, max: 10000 },
-        { name: 'overlap', label: 'Overlap (optional)', type: 'number', default: 0, min: 0, max: 500 }
+        { name: 'overlap', label: 'Chunk Overlap Size', type: 'number', default: 0, min: 0, max: 500 }
     ],
     recursive: [
         { name: 'chunk_size', label: 'Chunk Size', type: 'number', default: 500, min: 50, max: 5000 },
         { name: 'overlap', label: 'Overlap', type: 'number', default: 50, min: 0, max: 500 }
     ]
+};
+
+// AI-like Insights (Hardcoded but contextual)
+const STRATEGY_INSIGHTS = {
+    fixed: {
+        lowChunks: "With fixed-size chunking and small chunk sizes, you get many uniform pieces. Notice how some chunks might break mid-sentence? This is the trade-off for predictability.",
+        highChunks: "Smaller chunks mean more granular search, but you might lose context. In RAG systems, this can lead to fragmented answers.",
+        withOverlap: "Great! Overlap ensures that context isn't lost at boundaries. Even if a sentence is split, the overlap preserves the full meaning.",
+        default: "Fixed-size chunking is splitting your text like a ruler—every chunk is exactly N characters. Simple, but sometimes breaks sentences awkwardly."
+    },
+    sentence: {
+        lowChunks: "Sentence-based chunking created fewer, more meaningful chunks. Each chunk respects sentence boundaries, preserving complete thoughts.",
+        highChunks: "More chunks with sentence-based strategy means shorter sentences in your text. Notice how semantic meaning stays intact in each chunk?",
+        withOverlap: "Sentence overlap is powerful—it ensures that consecutive sentences share context, making retrieval more accurate in RAG systems.",
+        default: "Sentence-based chunking respects language structure. Each chunk ends at a sentence boundary, keeping ideas complete and searchable."
+    },
+    paragraph: {
+        lowChunks: "Paragraph chunking creates larger, topic-focused chunks. Perfect for when you want to preserve entire arguments or narratives.",
+        highChunks: "Your text has many short paragraphs, resulting in more chunks. Each chunk represents a complete topic or idea.",
+        withOverlap: "With paragraph overlap, consecutive topics share context. This helps RAG systems understand relationships between ideas.",
+        default: "Paragraph-based chunking keeps complete topics together. Chunks are larger but maintain full context for each subject discussed."
+    },
+    recursive: {
+        lowChunks: "Recursive chunking adapted to your text's structure, creating chunks that respect natural boundaries. Notice the mix of sizes?",
+        highChunks: "The recursive strategy found many natural split points in your text. It tried paragraphs first, then sentences, then characters.",
+        withOverlap: "Recursive chunking with overlap is the most adaptive approach. It preserves structure while ensuring no context is lost between chunks.",
+        default: "Recursive chunking is the smartest strategy—it tries to split at paragraphs, falls back to sentences, and only breaks on characters as a last resort."
+    }
 };
 
 // DOM Elements
@@ -53,6 +81,7 @@ const textInputContainer = document.getElementById('textInputContainer');
 let currentChunks = [];
 let currentText = '';
 let showOverlap = true;
+let currentStrategy = 'fixed';
 
 // Initialize
 function init() {
@@ -60,11 +89,29 @@ function init() {
     renderParams();
     setupEventListeners();
     sampleTextContent.textContent = SAMPLE_TEXT;
+    updateStrategyHint(); // Show initial hint
+    showWelcomeIfFirstVisit();
+}
+
+// Show welcome tooltip on first visit
+function showWelcomeIfFirstVisit() {
+    const hasVisited = localStorage.getItem('raglab_visited');
+    const welcomeTooltip = document.getElementById('welcomeTooltip');
+    
+    if (!hasVisited && welcomeTooltip) {
+        welcomeTooltip.style.display = 'block';
+        localStorage.setItem('raglab_visited', 'true');
+    } else if (welcomeTooltip) {
+        welcomeTooltip.style.display = 'none';
+    }
 }
 
 function setupEventListeners() {
     inputText.addEventListener('input', updateWordCount);
-    strategySelect.addEventListener('change', renderParams);
+    strategySelect.addEventListener('change', () => {
+        renderParams();
+        updateStrategyHint();
+    });
     generateBtn.addEventListener('click', generateChunks);
     showOverlapToggle.addEventListener('change', generateChunks);
     trySampleBtn.addEventListener('click', toggleSamplePanel);
@@ -89,11 +136,22 @@ function toggleSamplePanel() {
     if (isHidden) {
         sampleTextPanel.classList.remove('hidden');
         textInputContainer.classList.add('with-sample');
-        trySampleBtn.textContent = '✕ Hide Sample';
+        trySampleBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Hide Sample
+        `;
     } else {
         sampleTextPanel.classList.add('hidden');
         textInputContainer.classList.remove('with-sample');
-        trySampleBtn.textContent = '📝 Try Sample Text';
+        trySampleBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+            </svg>
+            Try Sample Text
+        `;
     }
 }
 
@@ -101,10 +159,38 @@ function copySampleText() {
     inputText.value = SAMPLE_TEXT;
     updateWordCount();
     
-    copySampleBtn.textContent = '✓ Copied!';
+    copySampleBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        Copied!
+    `;
     setTimeout(() => {
-        copySampleBtn.textContent = '📋 Copy & Use This Text';
+        copySampleBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy & Use This Text
+        `;
     }, 2000);
+}
+
+// Update strategy hint based on selection
+function updateStrategyHint() {
+    const strategy = strategySelect.value;
+    currentStrategy = strategy;
+    
+    // Hide all hints
+    document.querySelectorAll('.hint-text').forEach(hint => {
+        hint.classList.add('hidden');
+    });
+    
+    // Show selected strategy hint
+    const activeHint = document.querySelector(`[data-strategy="${strategy}"]`);
+    if (activeHint) {
+        activeHint.classList.remove('hidden');
+    }
 }
 
 function renderParams() {
@@ -158,6 +244,26 @@ function getParams() {
     return params;
 }
 
+// Update AI insight based on results
+function updateAIInsight(chunkCount, hasOverlap) {
+    const insightText = document.getElementById('insightText');
+    const insights = STRATEGY_INSIGHTS[currentStrategy];
+    
+    let message;
+    
+    if (hasOverlap) {
+        message = insights.withOverlap;
+    } else if (chunkCount <= 5) {
+        message = insights.lowChunks;
+    } else if (chunkCount > 15) {
+        message = insights.highChunks;
+    } else {
+        message = insights.default;
+    }
+    
+    insightText.textContent = message;
+}
+
 async function generateChunks() {
     const text = inputText.value.trim();
     
@@ -175,7 +281,14 @@ async function generateChunks() {
     const strategy = strategySelect.value;
     const params = getParams();
     
-    generateBtn.textContent = '⏳ Processing...';
+    generateBtn.innerHTML = `
+        <span class="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12a9 9 0 11-6.219-8.56"></path>
+            </svg>
+        </span>
+        <span class="btn-text">Processing...</span>
+    `;
     generateBtn.disabled = true;
     
     try {
@@ -203,11 +316,22 @@ async function generateChunks() {
         resultsSection.classList.remove('hidden');
         chunkCountDisplay.textContent = `${currentChunks.length} chunks`;
         
+        // Update AI insight
+        updateAIInsight(currentChunks.length, showOverlapToggle.checked);
+        
     } catch (error) {
         alert(`Error: ${error.message}`);
         console.error('Chunking error:', error);
     } finally {
-        generateBtn.textContent = '🚀 Generate Chunks';
+        generateBtn.innerHTML = `
+            <span class="btn-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+            </span>
+            <span class="btn-text">Generate Chunks</span>
+            <div class="btn-shine"></div>
+        `;
         generateBtn.disabled = false;
     }
 }
@@ -291,13 +415,14 @@ function showChunkDetails(ranges) {
         <p><strong>Position:</strong> ${primaryChunk.start} - ${primaryChunk.end}</p>
         <p><strong>Length:</strong> ${primaryChunk.length} characters</p>
         <p><strong>Text Preview:</strong></p>
-        <p style="background: #f7fafc; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; margin-top: 8px;">
+        <p style="background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; margin-top: 8px; border: 1px solid rgba(148, 163, 184, 0.2);">
             ${primaryChunk.text.substring(0, 200)}${primaryChunk.text.length > 200 ? '...' : ''}
         </p>
     `;
     
     if (ranges.length > 1) {
         html += `<p style="margin-top: 12px;"><strong>Overlapping with:</strong> ${ranges.slice(1).map(r => currentChunks[r.index].id).join(', ')}</p>`;
+        html += `<p style="margin-top: 8px; padding: 10px; background: rgba(236, 72, 153, 0.1); border-left: 3px solid #ec4899; border-radius: 4px; font-size: 0.875rem;"><strong>💡 Insight:</strong> This overlap means these chunks share context, improving retrieval accuracy in RAG systems!</p>`;
     }
     
     chunkInfo.innerHTML = html;
