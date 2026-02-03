@@ -1,344 +1,614 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RAG Lab - Chunking Visualization</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./static/style.css">
-</head>
-<body>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./static/style.css" />
+  </head>
+  <body>
     <!-- Animated Background Elements -->
     <div class="bg-orbs">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
     </div>
 
     <!-- Welcome Tooltip (appears once) -->
     <div class="welcome-tooltip" id="welcomeTooltip">
-        <div class="welcome-content">
-            <div class="welcome-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
-                    <path d="M2 17L12 22L22 17"></path>
-                    <path d="M2 12L12 17L22 12"></path>
-                </svg>
-            </div>
-            <h3>Welcome to RAG Lab! 👋</h3>
-            <p>Chunking is how we split text for AI systems. Different strategies produce different results—experiment to see why!</p>
-            <button class="welcome-btn" onclick="document.getElementById('welcomeTooltip').style.display='none'">
-                Get Started
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-            </button>
+      <div class="welcome-content">
+        <div class="welcome-icon">
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
+            <path d="M2 17L12 22L22 17"></path>
+            <path d="M2 12L12 17L22 12"></path>
+          </svg>
         </div>
+        <h3>Welcome to RAG Lab! 👋</h3>
+        <p>
+          Chunking is how we split text for AI systems. Different strategies
+          produce different results—experiment to see why!
+        </p>
+        <button
+          class="welcome-btn"
+          onclick="
+            document.getElementById('welcomeTooltip').style.display = 'none'
+          "
+        >
+          Get Started
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
     </div>
 
     <div class="container">
-        <!-- Header with improved styling -->
-        <header>
-            <div class="header-badge">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Header with improved styling -->
+      <header>
+        <div class="header-badge">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 2L2 7L12 12L22 7L12 2Z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M2 17L12 22L22 17"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M2 12L12 17L22 12"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>RAG Lab</span>
+        </div>
+        <h1>Chunking Visualization</h1>
+        <p class="subtitle">
+          Understand how different chunking strategies break text differently
+        </p>
+
+        <!-- Feature Pills -->
+        <div class="feature-pills">
+          <div class="pill active">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="9" x2="15" y2="9"></line>
+              <line x1="9" y1="15" x2="15" y2="15"></line>
+            </svg>
+            Chunking
+          </div>
+          <div class="pill coming-soon">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              ></path>
+            </svg>
+            RAG Chat
+            <span class="soon-tag">Soon</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="input-section">
+        <!-- Enhanced Input Area -->
+        <div class="text-input-wrapper">
+          <div class="input-header">
+            <div class="label-with-icon">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                ></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              <label for="inputText">Input Text</label>
+            </div>
+            <button id="trySampleBtn" class="sample-btn">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+              </svg>
+              Try Sample Text
+            </button>
+          </div>
+
+          <div class="text-input-container" id="textInputContainer">
+            <div class="textarea-wrapper">
+              <textarea
+                id="inputText"
+                placeholder="Paste your text here and watch it transform into chunks..."
+                rows="10"
+              ></textarea>
+              <div class="textarea-gradient"></div>
+            </div>
+
+            <div id="sampleTextPanel" class="sample-panel hidden">
+              <div class="panel-header">
+                <h3>
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  Sample Text
+                </h3>
+              </div>
+              <div id="sampleTextContent" class="sample-content"></div>
+              <button id="copySampleBtn" class="copy-btn">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path
+                    d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                  ></path>
                 </svg>
-                <span>RAG Lab</span>
+                Copy & Use This Text
+              </button>
             </div>
-            <h1>Chunking Visualization</h1>
-            <p class="subtitle">Understand how different chunking strategies break text differently</p>
-            
-            <!-- Feature Pills -->
-            <div class="feature-pills">
-                <div class="pill active">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="9" y1="9" x2="15" y2="9"></line>
-                        <line x1="9" y1="15" x2="15" y2="15"></line>
-                    </svg>
-                    Chunking
-                </div>
-                <div class="pill coming-soon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    RAG Chat
-                    <span class="soon-tag">Soon</span>
-                </div>
-            </div>
-        </header>
+          </div>
 
-        <div class="input-section">
-            <!-- Enhanced Input Area -->
-            <div class="text-input-wrapper">
-                <div class="input-header">
-                    <div class="label-with-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                        </svg>
-                        <label for="inputText">Input Text</label>
-                    </div>
-                    <button id="trySampleBtn" class="sample-btn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-                        </svg>
-                        Try Sample Text
-                    </button>
-                </div>
-                
-                <div class="text-input-container" id="textInputContainer">
-                    <div class="textarea-wrapper">
-                        <textarea 
-                            id="inputText" 
-                            placeholder="Paste your text here and watch it transform into chunks..."
-                            rows="10"
-                        ></textarea>
-                        <div class="textarea-gradient"></div>
-                    </div>
-                    
-                    <div id="sampleTextPanel" class="sample-panel hidden">
-                        <div class="panel-header">
-                            <h3>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                </svg>
-                                Sample Text
-                            </h3>
-                        </div>
-                        <div id="sampleTextContent" class="sample-content"></div>
-                        <button id="copySampleBtn" class="copy-btn">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            Copy & Use This Text
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="word-count">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                    </svg>
-                    <span id="wordCount">0 words</span>
-                    <span class="divider">/</span>
-                    <span class="max-words">10,000 max</span>
-                </div>
-            </div>
-
-            <!-- Enhanced Controls -->
-            <div class="controls">
-                <div class="controls-header">
-                    <h3>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"></path>
-                        </svg>
-                        Configure Strategy
-                    </h3>
-                    <div class="help-tooltip">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                        </svg>
-                        <span class="tooltip-text">Choose how your text should be split into chunks</span>
-                    </div>
-                </div>
-
-                <div class="control-group strategy-group">
-                    <label for="strategy">
-                        <span>Chunking Strategy</span>
-                        <span class="label-badge">Required</span>
-                    </label>
-                    <div class="select-wrapper">
-                        <select id="strategy">
-                            <option value="fixed">Fixed-Size Chunking</option>
-                            <option value="sentence">Sentence-Based Chunking</option>
-                            <option value="paragraph">Paragraph-Based Chunking</option>
-                            <option value="recursive">Recursive Chunking</option>
-                        </select>
-                        <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                    </div>
-                    
-                    <!-- AI-like Strategy Explanation -->
-                    <div class="strategy-hint" id="strategyHint">
-                        <div class="hint-icon">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                            </svg>
-                        </div>
-                        <div class="hint-content">
-                            <p class="hint-text" data-strategy="fixed">
-                                <strong>Why Fixed-Size?</strong> Splits text every N characters. Simple and predictable, but may break sentences mid-word. Best for: uniform processing needs.
-                            </p>
-                            <p class="hint-text hidden" data-strategy="sentence">
-                                <strong>Why Sentence-Based?</strong> Preserves sentence boundaries, keeping context intact. Chunks vary in size but maintain meaning. Best for: Q&A and semantic search.
-                            </p>
-                            <p class="hint-text hidden" data-strategy="paragraph">
-                                <strong>Why Paragraph-Based?</strong> Keeps entire paragraphs together, preserving topic coherence. Larger chunks with complete thoughts. Best for: document summarization.
-                            </p>
-                            <p class="hint-text hidden" data-strategy="recursive">
-                                <strong>Why Recursive?</strong> Smart splitting—tries paragraphs first, then sentences, then characters. Adapts to content structure. Best for: mixed content types.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="paramsContainer" class="params-container">
-                    <!-- Dynamic parameters will be inserted here -->
-                </div>
-
-                <button id="generateBtn" class="generate-btn">
-                    <span class="btn-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                        </svg>
-                    </span>
-                    <span class="btn-text">Generate Chunks</span>
-                    <div class="btn-shine"></div>
-                </button>
-            </div>
+          <div class="word-count">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+              ></path>
+              <path
+                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+              ></path>
+            </svg>
+            <span id="wordCount">0 words</span>
+            <span class="divider">/</span>
+            <span class="max-words">10,000 max</span>
+          </div>
         </div>
 
-        <!-- Enhanced Results Section -->
-        <div id="resultsSection" class="results-section hidden">
-            <!-- AI Insight Card -->
-            <div class="ai-insight-card" id="aiInsight">
-                <div class="insight-header">
-                    <div class="insight-badge">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 16v-4M12 8h.01"></path>
-                        </svg>
-                        <span>Why This Matters</span>
-                    </div>
-                    <button class="insight-close" onclick="document.getElementById('aiInsight').style.display='none'">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
-                </div>
-                <p class="insight-text" id="insightText">
-                    Different chunking strategies produce different results because they prioritize different aspects of text structure. Click on the colored chunks below to see how boundaries were chosen!
+        <!-- Enhanced Controls -->
+        <div class="controls">
+          <div class="controls-header">
+            <h3>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"></path>
+              </svg>
+              Configure Strategy
+            </h3>
+            <div class="help-tooltip">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              <span class="tooltip-text"
+                >Choose how your text should be split into chunks</span
+              >
+            </div>
+          </div>
+
+          <div class="control-group strategy-group">
+            <label for="strategy">
+              <span>Chunking Strategy</span>
+              <span class="label-badge">Required</span>
+            </label>
+            <div class="select-wrapper">
+              <select id="strategy">
+                <option value="fixed">Fixed-Size Chunking</option>
+                <option value="sentence">Sentence-Based Chunking</option>
+                <option value="paragraph">Paragraph-Based Chunking</option>
+                <option value="recursive">Recursive Chunking</option>
+              </select>
+              <svg
+                class="select-arrow"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+
+            <!-- AI-like Strategy Explanation -->
+            <div class="strategy-hint" id="strategyHint">
+              <div class="hint-icon">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="hint-content">
+                <p class="hint-text" data-strategy="fixed">
+                  <strong>Why Fixed-Size?</strong> Splits text every N
+                  characters. Simple and predictable, but may break sentences
+                  mid-word. Best for: uniform processing needs.
                 </p>
+                <p class="hint-text hidden" data-strategy="sentence">
+                  <strong>Why Sentence-Based?</strong> Preserves sentence
+                  boundaries, keeping context intact. Chunks vary in size but
+                  maintain meaning. Best for: Q&A and semantic search.
+                </p>
+                <p class="hint-text hidden" data-strategy="paragraph">
+                  <strong>Why Paragraph-Based?</strong> Keeps entire paragraphs
+                  together, preserving topic coherence. Larger chunks with
+                  complete thoughts. Best for: document summarization.
+                </p>
+                <p class="hint-text hidden" data-strategy="recursive">
+                  <strong>Why Recursive?</strong> Smart splitting—tries
+                  paragraphs first, then sentences, then characters. Adapts to
+                  content structure. Best for: mixed content types.
+                </p>
+              </div>
             </div>
-            
-            <div class="results-header">
-                <div class="results-title">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                    </svg>
-                    <h2>Results</h2>
-                </div>
-                <div class="results-controls">
-                    <div class="overlap-control-wrapper">
-                        <label class="toggle-label">
-                            <input type="checkbox" id="showOverlapToggle" checked>
-                            <span class="toggle-slider"></span>
-                            <span class="toggle-text">Visualize Overlap</span>
-                        </label>
-                        <div class="mini-tooltip">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                            </svg>
-                            <span class="mini-tooltip-text">Overlap ensures context isn't lost at chunk boundaries. Helpful for retrieval accuracy!</span>
-                        </div>
-                    </div>
-                    <div class="chunk-count">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
-                            <path d="M2 17L12 22L22 17"></path>
-                            <path d="M2 12L12 17L22 12"></path>
-                        </svg>
-                        <span id="chunkCount">0 chunks</span>
-                    </div>
-                </div>
-            </div>
+          </div>
 
-            <div class="visualization-wrapper">
-                <div class="viz-header">
-                    <div class="viz-title">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="8" y1="6" x2="21" y2="6"></line>
-                            <line x1="8" y1="12" x2="21" y2="12"></line>
-                            <line x1="8" y1="18" x2="21" y2="18"></line>
-                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                        </svg>
-                        <span>Chunked Text Visualization</span>
-                    </div>
-                    <div class="viz-hint">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 18l6-6-6-6"></path>
-                        </svg>
-                        Each color = one chunk
-                    </div>
-                </div>
-                
-                <!-- Contextual Tips -->
-                <div class="context-tips" id="contextTips">
-                    <div class="tip-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        <span>Overlapping chunks share striped pattern</span>
-                    </div>
-                    <div class="tip-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        <span>Hover any chunk to highlight it</span>
-                    </div>
-                </div>
-                
-                <div id="visualizationContainer" class="visualization-container">
-                    <!-- Chunked text visualization will appear here -->
-                </div>
-            </div>
+          <div id="paramsContainer" class="params-container">
+            <!-- Dynamic parameters will be inserted here -->
+          </div>
 
-            <div id="chunkInfoPanel" class="chunk-info-panel">
-                <div class="panel-header">
-                    <h3>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
-                        Chunk Details
-                    </h3>
-                </div>
-                <div id="chunkInfo">
-                    <div class="empty-state">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                        </svg>
-                        <p>Click on any highlighted chunk to see details</p>
-                    </div>
-                </div>
-            </div>
+          <button id="generateBtn" class="generate-btn">
+            <span class="btn-icon">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polygon
+                  points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"
+                ></polygon>
+              </svg>
+            </span>
+            <span class="btn-text">Generate Chunks</span>
+            <div class="btn-shine"></div>
+          </button>
         </div>
+      </div>
+
+      <!-- Enhanced Results Section -->
+      <div id="resultsSection" class="results-section hidden">
+        <!-- AI Insight Card -->
+        <div class="ai-insight-card" id="aiInsight">
+          <div class="insight-header">
+            <div class="insight-badge">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4M12 8h.01"></path>
+              </svg>
+              <span>Why This Matters</span>
+            </div>
+            <button
+              class="insight-close"
+              onclick="
+                document.getElementById('aiInsight').style.display = 'none'
+              "
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <p class="insight-text" id="insightText">
+            Different chunking strategies produce different results because they
+            prioritize different aspects of text structure. Click on the colored
+            chunks below to see how boundaries were chosen!
+          </p>
+        </div>
+
+        <div class="results-header">
+          <div class="results-title">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            <h2>Results</h2>
+          </div>
+          <div class="results-controls">
+            <div class="overlap-control-wrapper">
+              <label class="toggle-label">
+                <input type="checkbox" id="showOverlapToggle" checked />
+                <span class="toggle-slider"></span>
+                <span class="toggle-text">Visualize Overlap</span>
+              </label>
+              <div class="mini-tooltip">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <span class="mini-tooltip-text"
+                  >Overlap ensures context isn't lost at chunk boundaries.
+                  Helpful for retrieval accuracy!</span
+                >
+              </div>
+            </div>
+            <div class="chunk-count">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
+                <path d="M2 17L12 22L22 17"></path>
+                <path d="M2 12L12 17L22 12"></path>
+              </svg>
+              <span id="chunkCount">0 chunks</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="visualization-wrapper">
+          <div class="viz-header">
+            <div class="viz-title">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+              <span>Chunked Text Visualization</span>
+            </div>
+            <div class="viz-hint">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M9 18l6-6-6-6"></path>
+              </svg>
+              Each color = one chunk
+            </div>
+          </div>
+
+          <!-- Contextual Tips -->
+          <div class="context-tips" id="contextTips">
+            <div class="tip-item">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <span>Overlapping chunks share striped pattern</span>
+            </div>
+            <div class="tip-item">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>Hover any chunk to highlight it</span>
+            </div>
+          </div>
+
+          <div id="visualizationContainer" class="visualization-container">
+            <!-- Chunked text visualization will appear here -->
+          </div>
+        </div>
+
+        <div id="chunkInfoPanel" class="chunk-info-panel">
+          <div class="panel-header">
+            <h3>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              Chunk Details
+            </h3>
+          </div>
+          <div id="chunkInfo">
+            <div class="empty-state">
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <p>Click on any highlighted chunk to see details</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    
+
+    <footer class="raglab-footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <span class="footer-logo">RAG Lab</span>
+          <p class="footer-desc">
+            A visual sandbox to understand how text chunking shapes
+            retrieval-augmented generation systems.
+          </p>
+        </div>
+
+        <div class="footer-center">
+          <span class="footer-tag">Chunking</span>
+          <span class="footer-separator">•</span>
+          <span class="footer-tag">Retrieval</span>
+          <span class="footer-separator">•</span>
+          <span class="footer-tag">RAG</span>
+        </div>
+
+        <div class="footer-right">
+          <span class="footer-meta">Built for experimentation</span>
+          <span class="footer-year">© 2026</span>
+        </div>
+      </div>
+    </footer>
+
     <script src="./static/config.js"></script>
     <script src="./static/script.js"></script>
-</body>
+  </body>
 </html>
